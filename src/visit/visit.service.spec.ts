@@ -1,15 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { VisitService } from './visit.service';
 import Redis from 'ioredis';
+import { RedisService } from '@/redis/redis.service';
 
 describe('VisitService', () => {
   let service: VisitService;
   let redisClient: Redis;
 
+  afterAll(async () => {
+    await redisClient.quit(); // Close the Redis connection
+  });
+
   beforeEach(async () => {
     redisClient = new Redis();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        RedisService,
         VisitService,
         {
           provide: 'REDIS_CLIENT',
